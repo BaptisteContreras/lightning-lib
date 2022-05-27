@@ -11,7 +11,8 @@
   ],
   "require": {
     "php": ">=7.3",
-    "sflightning/contracts": "dev-main"
+    "sflightning/contracts": "dev-main",
+    "symfony/event-dispatcher": "^5.4"
   },
   "require-dev": {
     "swoole/ide-helper": "^4.6"
@@ -25,8 +26,5 @@
     }
   },
   "minimum-stability": "dev",
-  "prefer-stable": true,
-  "provide": {
-    "sflightning/contracts": "*"
-  }
+  "prefer-stable": true
 }

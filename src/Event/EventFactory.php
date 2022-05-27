@@ -1,5 +1,6 @@
 <?php
 
+namespace Sflightning\Lib\Event;
 
 use Sflightning\Contracts\Event\EventFactoryInterface;
 use Sflightning\Contracts\Event\Swoole\LightningFinishEventInterface;
@@ -20,33 +21,33 @@ class EventFactory implements EventFactoryInterface
 {
     /**         Methods         **/
 
-    public function createServerStartEvent(Server $server, $workerId): LightningServerStartEventInterface
+    public function createServerStartEvent(Server $server): LightningServerStartEventInterface
     {
-        return new LightningServerStartEvent($server, $workerId);
+        return new LightningServerStartEvent($server);
     }
 
-    public function createServerShutdownEvent(Server $server, $workerId): LightningServerShutdownEventInterface
+    public function createServerShutdownEvent(Server $server): LightningServerShutdownEventInterface
     {
-        return new LightningServerShutdownEvent($server, $workerId);
+        return new LightningServerShutdownEvent($server);
     }
 
-    public function createFinishEvent(Server $server, $workerId): LightningFinishEventInterface
+    public function createFinishEvent(Server $server): LightningFinishEventInterface
     {
-        return new LightningFinishEvent($server, $workerId);
+        return new LightningFinishEvent($server);
     }
 
-    public function createTaskEvent(Server $server, $workerId): LightningTaskEventInterface
+    public function createTaskEvent(Server $server): LightningTaskEventInterface
     {
-        return new LightningTaskEvent($server, $workerId);
+        return new LightningTaskEvent($server);
     }
 
-    public function createWorkerStartEvent(Server $server, $workerId): LightningWorkerStartEventInterface
+    public function createWorkerStartEvent(Server $server): LightningWorkerStartEventInterface
     {
-        return new LightningWorkerStartEvent($server, $workerId);
+        return new LightningWorkerStartEvent($server);
     }
 
-    public function createWorkerStopEvent(Server $server, $workerId): LightningWorkerStopEventInterface
+    public function createWorkerStopEvent(Server $server): LightningWorkerStopEventInterface
     {
-        return new LightningWorkerStopEvent($server, $workerId);
+        return new LightningWorkerStopEvent($server);
     }
 }

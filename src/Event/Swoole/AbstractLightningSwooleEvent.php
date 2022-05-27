@@ -14,14 +14,11 @@ abstract class AbstractLightningSwooleEvent
     /** @var Server */
     protected $server;
 
-    protected $workerId;
-
     /**         Constructor         **/
 
-    public function __construct(Server $server, $workerId)
+    public function __construct(Server $server)
     {
         $this->server = $server;
-        $this->workerId = $workerId;
     }
 
     /**         Accessors         **/
@@ -29,14 +26,6 @@ abstract class AbstractLightningSwooleEvent
     public function getServer(): Server
     {
         return $this->server;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getWorkerId()
-    {
-        return $this->workerId;
     }
 
 }
