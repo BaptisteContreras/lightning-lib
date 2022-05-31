@@ -8,8 +8,10 @@ use Sflightning\Contracts\Concurrency\ConcurrencyHandlerInterface;
 use Sflightning\Contracts\Concurrency\ConcurrencyManagerInterface;
 use Sflightning\Contracts\Concurrency\Promise\ConcurrencyPromiseDecoratorInterface;
 use Sflightning\Contracts\Concurrency\Promise\LightningPromiseInterface;
+use Sflightning\Contracts\Concurrency\Promise\PromiseStateInterface;
 use Sflightning\Contracts\Constante\Concurrency;
 use Sflightning\Lib\Concurrency\Promise\Decorator\BasicConcurrencyPromiseDecorator;
+use Sflightning\Lib\Concurrency\Promise\Exception\InvalidPromiseTypeException;
 use Sflightning\Lib\Concurrency\Promise\Exception\PromiseAlreadyHandledException;
 use Sflightning\Lib\Concurrency\Promise\Exception\PromiseNotHandledException;
 
@@ -40,8 +42,24 @@ class ConcurrencyPromiseManager implements ConcurrencyManagerInterface
 
     public function executePromises(...$promises): void
     {
-        // pour chaques promise, create state
-        // exec
+        $asyncTask = array_map(function ($promise)  {
+            if (!$promise instanceof LightningPromiseInterface) {
+                throw new InvalidPromiseTypeException($promise);
+            }
+
+            if ($this->checkExistsInSet($promise)) {
+                throw new PromiseAlreadyHandledException($promise->getUid());
+            }
+
+            $promiseState = $this->createPromiseState($promise);
+
+            return [
+                $this->promiseDecorator->decorateTaskCallback($promiseState),
+                [$this->promiseDecorator->decorateResolveCallback($promiseState), $this->promiseDecorator->decorateRejectCallback($promiseState)]
+            ];
+        }, $promises);
+
+        $this->coroutineHandler->handleMultiple($asyncTask);
     }
 
     public function executePromise(LightningPromiseInterface $promise): void
@@ -51,9 +69,7 @@ class ConcurrencyPromiseManager implements ConcurrencyManagerInterface
             throw new PromiseAlreadyHandledException($promise->getUid());
         }
 
-        $promiseState = PromiseState::build($promise);
-
-        $this->promisesSet[$promise->getUid()] = $promiseState;
+        $promiseState = $this->createPromiseState($promise);
 
         $this->coroutineHandler->handleOne(
             $this->promiseDecorator->decorateTaskCallback($promiseState),
@@ -88,5 +104,14 @@ class ConcurrencyPromiseManager implements ConcurrencyManagerInterface
     private function cleanPromiseState(LightningPromiseInterface $promise): void
     {
         unset($this->promisesSet[$promise->getUid()]);
+    }
+
+    private function createPromiseState(LightningPromiseInterface $promise): PromiseStateInterface
+    {
+        $promiseState = PromiseState::build($promise);
+
+        $this->promisesSet[$promise->getUid()] = $promiseState;
+
+        return $promiseState;
     }
 }

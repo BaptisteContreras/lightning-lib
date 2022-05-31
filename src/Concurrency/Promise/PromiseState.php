@@ -45,7 +45,4 @@ class PromiseState implements CoroutinePromiseState
     {
         return $this->waitGroup;
     }
-
-
-
 }

@@ -17,6 +17,8 @@ class CoroutineHandler implements ConcurrencyHandlerInterface
 
     public function handleMultiple(array $asyncCallables): void
     {
-       // TODO
+       foreach ($asyncCallables as $asyncCallable) {
+           Coroutine::create($asyncCallable[0], ...$asyncCallable[1]);
+       }
     }
 }
